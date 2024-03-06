@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('roleminions', function (Blueprint $table) {
             $table->id();
+            $table->string('empid');
+            $table->string('username');
+            $table->string('emailaddress');
+            $table->string('mobilenumber');
+            $table->string('roles');
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
