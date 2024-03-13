@@ -11,6 +11,7 @@
     <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/libs/css/style.css">
     <link rel="stylesheet" href="assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         html,
         body {
@@ -70,7 +71,7 @@
     </div>
 
     <!-- Modal -->
-    <form action="#" id="basicform" data-parsley-validate="" novalidate="">
+    <form  id="basicform" >
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -82,10 +83,6 @@
                         </a>
                     </div>
                     <div class="modal-body">
-                        <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="customFile">
-                            <label class="custom-file-label" for="customFile">Profile Image</label>
-                        </div>
                         <div class="form-group">
                             <label for="inputUserName">User Name</label>
                             <input id="inputUserName" type="text" name="name" data-parsley-trigger="change" required=""
@@ -99,13 +96,13 @@
 
                         <div class="form-group">
                             <label for="input-select">Register As</label>
-                            <select class="form-control" id="input-select">
+                            <select class="form-control" name="roles" id="input-select">
                                 <option>Select</option>
-                                <option>Employee</option>
-                                <option>Captain</option>
-                                <option>Manager</option>
-                                <option>Client</option>
-                                <option>Owner</option>
+                                <option value="1">Employee</option>
+                                <option value="2">Captain</option>
+                                <option value="3">Manager</option>
+                                <option value="4">Client</option>
+                                <option value="5">Owner</option>
                             </select>
                         </div>
                         <div class="row">
@@ -120,7 +117,7 @@
                     </div>
                     <div class="modal-footer">
                         <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-                        <a href="#" class="btn btn-primary">Save changes</a>
+                        <button class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -133,6 +130,93 @@
     <!-- Optional JavaScript -->
     <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"
+    integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        
+$(document).ready(function () {
+    $("#basicform").validate({
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            },
+            email: {
+                required: true,
+                email: true,
+            },
+            roles:{
+                required: true,
+            }
+        },
+        messages: {
+            name: {
+                required: "Please enter your name",
+                minlength: "Name must be at least 2 characters long"
+            },
+            email: {
+                required: "Please enter your name",
+                email: "Enter valid email-address"
+            },
+            roles:{
+                required: "please select",
+            }
+
+        }
+    });
+    $('#basicform').on('submit', function (e) {
+        
+    
+        if($('#basicform').valid())
+      {
+        e.preventDefault();
+        $.ajax({
+            url: "https://thewall.host4india.in/bughunter/public/api/user/store",
+            type: 'POST',
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (response) {
+                $('#basicform').trigger('reset');
+                Swal.fire({
+                    title: "User Successfully registered",
+                    width: 600,
+                    padding: "3em",
+                    color: "#716add",
+                    background: "#fff url(/images/trees.png)",
+                    backdrop: `
+                                rgba(0,0,123,0.4)
+                                url("/images/nyan-cat.gif")
+                                left top
+                                no-repeat
+                            `
+                });
+                if (response.success) {
+                    // Close the modal
+                    $('#exampleModal').modal('hide');
+                }
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = xhr.status + ': ' + xhr.statusText;
+                //alert( xhr.responseText);
+                var data=xhr.responseText;
+                var jsonResponse = JSON.parse(data);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: `Name: ${jsonResponse.name}\nEmail: ${jsonResponse.email}\nPassword: ${jsonResponse.password}\nPassword Confirmation: ${jsonResponse.password_confirmation}`,
+                });
+                
+            }
+        });
+        }
+    });
+ 
+});
+
+    </script>
 </body>
 
 </html>
