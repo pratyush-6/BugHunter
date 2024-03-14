@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username');
             $table->string('emailaddress');
             $table->string('mobilenumber');
-            $table->string('roles');
+            $table->string('roles')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });
